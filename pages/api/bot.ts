@@ -20,7 +20,7 @@ const handleEvent = async (event: SlackEvent, res: NextApiResponse) => {
             channel: event.channel,
             text: "nakki",
           });
-        } else {
+        } else if (event.user === "U4TBQUUN4") {
           await app.client.reactions.add({
             name: "+1",
             timestamp: event.ts,
