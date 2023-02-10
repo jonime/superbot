@@ -29,8 +29,9 @@ const handler: NextApiHandler = async (req, res) => {
   } else if (req.body.type === "event_callback") {
     await handleEvent(req.body.event, res);
     res.status(200).send("OK");
+  } else {
+    res.status(400).send("Invalid request");
   }
-  res.status(400).send("Invalid request");
 };
 
 export default handler;
