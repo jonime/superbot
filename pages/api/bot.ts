@@ -14,11 +14,19 @@ const handleEvent = async (event: SlackEvent, res: NextApiResponse) => {
       if ("bot_id" in event) {
         return;
       }
-      if ("text" in event && event.text === "nakki") {
-        await app.client.chat.postMessage({
-          channel: event.channel,
-          text: "nakki",
-        });
+      if ("text" in event) {
+        if (event.text === "nakki") {
+          await app.client.chat.postMessage({
+            channel: event.channel,
+            text: "nakki",
+          });
+        } else {
+          await app.client.reactions.add({
+            name: "+1",
+            timestamp: event.ts,
+            channel: event.channel,
+          });
+        }
       }
   }
 };
