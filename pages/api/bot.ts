@@ -30,6 +30,7 @@ const handler: NextApiHandler = async (req, res) => {
     await handleEvent(req.body.event, res);
     res.status(200).send("OK");
   }
+  res.status(400).send("Invalid request");
 };
 
 export default handler;
