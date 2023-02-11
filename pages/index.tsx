@@ -10,6 +10,7 @@ import {
 import { getStringValue } from "../src/utils";
 import styles from "../styles/Home.module.css";
 import { Message } from "../src/types";
+import Head from "next/head";
 
 export default function Home() {
   const scrollerRef = useRef<HTMLSpanElement>(null);
@@ -75,45 +76,50 @@ export default function Home() {
   }, [data]);
 
   return (
-    <form onSubmit={onSubmit}>
-      <div className={styles.container}>
-        <div className={styles.box}>
-          <h1>Ask superdevs?</h1>
+    <>
+      <Head>
+        <title>Ask superdevs?</title>
+      </Head>
+      <form onSubmit={onSubmit}>
+        <div className={styles.container}>
+          <div className={styles.box}>
+            <h1>Ask superdevs?</h1>
 
-          <div className={styles.chat}>
-            {data?.map((message, index) => (
-              <div key={index}>
-                {message.from}: {message.text}
-              </div>
-            ))}
-            <span ref={scrollerRef} />
+            <div className={styles.chat}>
+              {data?.map((message, index) => (
+                <div key={index}>
+                  {message.from}: {message.text}
+                </div>
+              ))}
+              <span ref={scrollerRef} />
+            </div>
+
+            <div className={styles.form}>
+              <textarea
+                value={value}
+                onKeyDown={onKeyDown}
+                onChange={(event) => setValue(event.currentTarget.value)}
+                className={styles.input}
+                cols={1}
+                rows={3}
+              />
+
+              <button className={styles.sendButton} disabled={sending}>
+                Send
+              </button>
+            </div>
+            {thread && (
+              <button
+                className={styles.newButton}
+                type="button"
+                onClick={() => router.replace({ query: {} })}
+              >
+                New question
+              </button>
+            )}
           </div>
-
-          <div className={styles.form}>
-            <textarea
-              value={value}
-              onKeyDown={onKeyDown}
-              onChange={(event) => setValue(event.currentTarget.value)}
-              className={styles.input}
-              cols={1}
-              rows={3}
-            />
-
-            <button className={styles.sendButton} disabled={sending}>
-              Send
-            </button>
-          </div>
-          {thread && (
-            <button
-              className={styles.newButton}
-              type="button"
-              onClick={() => router.replace({ query: {} })}
-            >
-              New question
-            </button>
-          )}
         </div>
-      </div>
-    </form>
+      </form>
+    </>
   );
 }
