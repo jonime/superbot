@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import styles from "../styles/Home.module.css";
 import Head from "next/head";
 import { useChat } from "../src/useChat";
+import { Button, Paper, TextField } from "@mui/material";
 
 export default function Home() {
   const {
@@ -31,39 +32,37 @@ export default function Home() {
       <form onSubmit={onSubmit}>
         <div className={styles.container}>
           <div className={styles.box}>
-            <h1>Ask superdevs?</h1>
-
-            <div className={styles.chat}>
+            <Paper variant="elevation" className={styles.chat}>
               {messages?.map((message, index) => (
                 <div key={index}>
                   {message.from}: {message.text}
                 </div>
               ))}
               <span ref={scrollerRef} />
-            </div>
+            </Paper>
 
             <div className={styles.form}>
-              <textarea
+              <TextField
+                label="Ask superdevs?"
                 value={value}
                 onKeyDown={onKeyDown}
                 onChange={(event) => setValue(event.currentTarget.value)}
                 className={styles.input}
-                cols={1}
-                rows={3}
+                multiline
               />
 
-              <button className={styles.sendButton} disabled={sending}>
+              <Button disabled={sending} variant="contained" color="success">
                 Send
-              </button>
+              </Button>
             </div>
-            <button
-              className={styles.newButton}
+            <Button
               type="button"
+              variant="contained"
               onClick={newQuestion}
               style={{ visibility: inThread ? "initial" : "hidden" }}
             >
               New question
-            </button>
+            </Button>
           </div>
         </div>
       </form>
