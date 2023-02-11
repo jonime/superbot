@@ -15,10 +15,10 @@ const handleEvent = async (event: SlackEvent, res: NextApiResponse) => {
         return;
       }
       if ("text" in event) {
-        if (event.text === "nakki") {
+        if (event.text && event.text.includes("nakki")) {
           await app.client.chat.postMessage({
             channel: event.channel,
-            text: "nakki",
+            text: event.text,
           });
         } else if (event.user === "U4TBQUUN4") {
           await app.client.reactions.add({
