@@ -15,7 +15,7 @@ const handleEvent = async (event: SlackEvent, res: NextApiResponse) => {
         return;
       }
       if ("text" in event && event.text) {
-        const [secretWord] = event.text.match(/nakki|höhö/) || [];
+        const [secretWord] = event.text.match(/nakki|höhö/i) || [];
 
         if (secretWord) {
           await app.client.chat.postMessage({
