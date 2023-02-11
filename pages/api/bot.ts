@@ -1,12 +1,6 @@
-import { App, SlackEvent } from "@slack/bolt";
+import { SlackEvent } from "@slack/bolt";
 import { NextApiHandler, NextApiResponse } from "next";
-
-const app = new App({
-  clientId: process.env.SLACK_APP_CLIENT_ID,
-  clientSecret: process.env.SLACK_APP_CLIENT_SECRET,
-  signingSecret: process.env.SLACK_APP_SIGN_SECRET,
-  token: process.env.SLACK_APP_TOKEN,
-});
+import { slackClient } from "../../src/api/slackClient";
 
 const handleEvent = async (event: SlackEvent, res: NextApiResponse) => {
   switch (event.type) {
@@ -18,15 +12,9 @@ const handleEvent = async (event: SlackEvent, res: NextApiResponse) => {
         const [secretWord] = event.text.match(/nakki|höhö/i) || [];
 
         if (secretWord) {
-          await app.client.chat.postMessage({
+          await slackClient.chat.postMessage({
             channel: event.channel,
             text: secretWord,
-          });
-        } else if (event.user === "U4TBQUUN4") {
-          await app.client.reactions.add({
-            name: "+1",
-            timestamp: event.ts,
-            channel: event.channel,
           });
         }
       }
