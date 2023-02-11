@@ -26,20 +26,26 @@
   min-width: 0;
   padding: 4px;
   resize: none;
+  border: none;
+  outline: none;
+  background: #f3f3f3;
 }
 
 .newButton,
 .sendButton {
+  border: none;
   padding: 8px 32px;
 }
 
 .sendButton {
   display: block;
-  background: pink;
+  background: #00d312;
 }
 
 .chat {
-  max-height: 200px;
+  height: 200px;
   overflow: auto;
   white-space: pre;
+  background: #e3e3e3;
+  padding: 8px;
 }

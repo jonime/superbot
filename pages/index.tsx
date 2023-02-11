@@ -1,79 +1,27 @@
-import useSWR from "swr";
-import { useRouter } from "next/router";
-import {
-  FormEventHandler,
-  KeyboardEventHandler,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { getStringValue } from "../src/utils";
+import { useEffect, useRef } from "react";
 import styles from "../styles/Home.module.css";
-import { Message } from "../src/types";
 import Head from "next/head";
+import { useChat } from "../src/useChat";
 
 export default function Home() {
+  const {
+    messages,
+    inThread,
+    onKeyDown,
+    onSubmit,
+    sending,
+    value,
+    setValue,
+    newQuestion,
+  } = useChat();
+
   const scrollerRef = useRef<HTMLSpanElement>(null);
-  const router = useRouter();
-  const [value, setValue] = useState("");
-  const thread = getStringValue(router.query.thread);
-  const [sending, setSending] = useState(false);
-
-  const { data, mutate } = useSWR<Message[]>(
-    thread && `/api/message/${thread}`,
-    { refreshInterval: 5000 }
-  );
-
-  const onKeyDown: KeyboardEventHandler = (event) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      onSubmit(event);
-    }
-  };
-
-  const onSubmit: FormEventHandler = async (event) => {
-    event.preventDefault();
-
-    if (!value) {
-      return;
-    }
-
-    try {
-      setSending(true);
-
-      const response = await fetch(
-        `/api/message${thread ? `/${thread}` : ""}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain",
-          },
-          body: value,
-        }
-      );
-
-      if (response.status === 429) {
-        return alert(await response.text());
-      }
-
-      const json = await response.json();
-
-      if (thread) {
-        mutate();
-      } else {
-        router.replace({ query: { thread: json.thread } });
-      }
-    } finally {
-      setSending(false);
-    }
-
-    setValue("");
-  };
 
   useEffect(() => {
     scrollerRef.current?.scrollIntoView({
       behavior: "smooth",
     });
-  }, [data]);
+  }, [messages]);
 
   return (
     <>
@@ -86,7 +34,7 @@ export default function Home() {
             <h1>Ask superdevs?</h1>
 
             <div className={styles.chat}>
-              {data?.map((message, index) => (
+              {messages?.map((message, index) => (
                 <div key={index}>
                   {message.from}: {message.text}
                 </div>
@@ -108,15 +56,14 @@ export default function Home() {
                 Send
               </button>
             </div>
-            {thread && (
-              <button
-                className={styles.newButton}
-                type="button"
-                onClick={() => router.replace({ query: {} })}
-              >
-                New question
-              </button>
-            )}
+            <button
+              className={styles.newButton}
+              type="button"
+              onClick={newQuestion}
+              style={{ visibility: inThread ? "initial" : "hidden" }}
+            >
+              New question
+            </button>
           </div>
         </div>
       </form>
