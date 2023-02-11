@@ -13,33 +13,37 @@ const handler: NextApiHandler = rateLimiter(async (req, res) => {
     return;
   }
 
-  if (req.method === "POST") {
-    await slackClient.chat.postMessage({
-      channel: env.channel,
-      thread_ts: thread,
-      text: req.body,
-    });
-    res.status(200).json({ status: "OK" });
-  } else {
-    const response = await slackClient.conversations.replies({
-      ts: thread,
-      channel: env.channel,
-    });
+  try {
+    if (req.method === "POST") {
+      await slackClient.chat.postMessage({
+        channel: env.channel,
+        thread_ts: thread,
+        text: req.body,
+      });
+      res.status(200).json({ status: "OK" });
+    } else {
+      const response = await slackClient.conversations.replies({
+        ts: thread,
+        channel: env.channel,
+      });
 
-    const messages = await Promise.all(
-      response.messages?.map(
-        async (message): Promise<Message> => ({
-          from:
-            message.user === env.botUser
-              ? "you"
-              : (message.user && (await getUser(message.user)).user?.name) ||
-                "somebody",
-          text: message.text || "",
-        })
-      ) || []
-    );
+      const messages = await Promise.all(
+        response.messages?.map(
+          async (message): Promise<Message> => ({
+            from:
+              message.user === env.botUser
+                ? "you"
+                : (message.user && (await getUser(message.user)).user?.name) ||
+                  "somebody",
+            text: message.text || "",
+          })
+        ) || []
+      );
 
-    res.status(200).json(messages);
+      res.status(200).json(messages);
+    }
+  } catch (e) {
+    res.status(400).send("Invalid request");
   }
 });
 

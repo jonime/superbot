@@ -1,6 +1,11 @@
 import useSWR from "swr";
 import { useRouter } from "next/router";
-import { FormEventHandler, KeyboardEventHandler, useState } from "react";
+import {
+  FormEventHandler,
+  KeyboardEventHandler,
+  useEffect,
+  useState,
+} from "react";
 import { getStringValue } from "./utils";
 import { Message } from "./types";
 
@@ -11,10 +16,19 @@ export const useChat = () => {
   const [value, setValue] = useState("");
   const [sending, setSending] = useState(false);
 
-  const { data: messages, mutate } = useSWR<Message[]>(
-    thread && `/api/message/${thread}`,
-    { refreshInterval: 5000 }
-  );
+  const {
+    data: messages,
+    mutate,
+    error,
+  } = useSWR<Message[]>(thread && `/api/message/${thread}`, {
+    refreshInterval: 5000,
+  });
+
+  useEffect(() => {
+    if (error && thread) {
+      router.replace({ query: {} });
+    }
+  }, [error, router, thread]);
 
   const onKeyDown: KeyboardEventHandler = (event) => {
     if (event.key === "Enter" && !event.shiftKey) {
