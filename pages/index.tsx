@@ -42,6 +42,7 @@ export default function Home() {
 
             <div className={styles.form}>
               <textarea
+                placeholder="Ask superdevs?"
                 value={value}
                 onKeyDown={onKeyDown}
                 onChange={(event) => setValue(event.currentTarget.value)}
